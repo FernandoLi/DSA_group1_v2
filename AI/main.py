@@ -1,5 +1,5 @@
 def play(stat, storage):
-
+    # 我又添加了很多注释
     # 我添加了很多注释
     from AI.DSA_group1_package.find_path import path_to
     from AI.DSA_group1_package import gen_func
