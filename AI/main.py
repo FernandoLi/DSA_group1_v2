@@ -1,4 +1,6 @@
 def play(stat, storage):
+
+    # 我添加了很多注释
     from AI.DSA_group1_package.find_path import path_to
     from AI.DSA_group1_package import gen_func
     # 距离计算的记录，一次比赛的play完成后会删除
