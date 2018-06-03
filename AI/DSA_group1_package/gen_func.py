@@ -21,18 +21,31 @@ def move(nowx, nowy, direction):
 
 def fail_check(stat, storage, inx, iny):
     # 返回0，死亡；返回1，目前不会死亡或获胜
-    if inx < 0 or iny < 0 or inx >= storage['size'][0] or iny >= storage['size'][1]:
+    if inx < 0 or iny < 0 or inx >= stat['size'][0] or iny >= stat['size'][1]:
         return 0
-    if stat['bands'][inx][iny] == stat['me']['id']:
+    if stat['now']['bands'][inx][iny] == stat['now']['me']['id']:
         return 0
-    if stat['fields'][inx][iny] == stat['enemy']['id'] and stat['enemy']['x'] == inx and stat['enemy']['y'] == iny:
+    if stat['now']['fields'][inx][iny] == stat['now']['enemy']['id'] and stat['now']['enemy']['x'] == inx and stat['now']['enemy']['y'] == iny:
         return 0
-    if inx == stat['enemy']['x'] and iny == stat['enemy']['y']:
-        if stat['enemy']['direction'] == stat['me']['direction']:
+    if inx == stat['now']['enemy']['x'] and iny == stat['now']['enemy']['y']:
+        if stat['now']['enemy']['direction'] == stat['now']['me']['direction']:
             count = fields_count(stat, storage)
             if count[0] < count[1]:
                 return 0
-    alist = [[None] * storage['size'][1] for i in range(0, storage['size'][0])]
+    test1 = move(inx, iny, stat['now']['me']['direction'])
+    test2 = move(test1[0] ,test1[1] ,stat['now']['me']['direction'] + direction_dict[LEFT])
+    test3 = move(test1[0], test1[1], stat['now']['me']['direction'] + direction_dict[RIGHT])
+    flag = False
+    for point in [test1,test2,test3]:
+        if point[0] < 0 or point[1] < 0 or point[0] >= stat['size'][0] or point[1] >= stat['size'][1]:
+            flag = True
+            break
+        if stat['now']['bands'][point[0]][point[1]] == stat['now']['me']['id']:
+            flag = True
+            break
+    if not flag:
+        return 1
+    alist = [[None] * stat['size'][1] for i in range(0, stat['size'][0])]
     temp = space_check(stat, storage, inx, iny, alist)
     if temp:
         return 1
@@ -44,10 +57,10 @@ def fields_count(stat, storage):
     if storage['fields_count']:
         return storage['fields_count']
     res = [0, 0]
-    for x in range(storage['size'][0]):
-        for y in range(storage['size'][1]):
-            if stat['fields'][x][y]:
-                if stat['fields'][x][y] == stat['me']['id']:
+    for x in range(stat['size'][0]):
+        for y in range(stat['size'][1]):
+            if stat['now']['fields'][x][y]:
+                if stat['now']['fields'][x][y] == stat['now']['me']['id']:
                     res[0] += 1
                 else:
                     res[1] += 1
@@ -59,7 +72,7 @@ def space_check(stat, storage, x, y, find_list):
     now_list = [(x, y)]
     find_all = 0
     while True:
-        if find_all > stat['turnleft'][1]:
+        if find_all > stat['now']['turnleft'][1]:
             return True
         if now_list == []:
             return False
@@ -67,13 +80,13 @@ def space_check(stat, storage, x, y, find_list):
         for element in now_list:
             x = element[0]
             y = element[1]
-            if x < 0 or y < 0 or x >= storage['size'][0] or y >= storage['size'][1]:
+            if x < 0 or y < 0 or x >= stat['size'][0] or y >= stat['size'][1]:
                 pass
-            elif stat['fields'][x][y] == stat['me']['id']:
+            elif stat['now']['fields'][x][y] == stat['now']['me']['id']:
                 find_all = 10000
                 break
-            elif stat['bands'][x][y] == stat['me']['id'] or find_list[x][y] is True or (
-                    stat['me']['x'] == x and stat['me']['y'] == y):
+            elif stat['now']['bands'][x][y] == stat['now']['me']['id'] or find_list[x][y] is True or (
+                    stat['now']['me']['x'] == x and stat['now']['me']['y'] == y):
                 pass
             else:
                 find_all += 1
@@ -88,10 +101,10 @@ def space_check(stat, storage, x, y, find_list):
 # 立即胜利情形，很罕见
 def win_check(stat , storage , inx ,iny):
     #  立即获胜返回True，否则False
-    if stat['bands'][inx][iny] == stat['enemy']['id']:
+    if stat['now']['bands'][inx][iny] == stat['now']['enemy']['id']:
         return True
-    if inx == stat['enemy']['x'] and iny == stat['enemy']['y']:
-        if stat['enemy']['direction'] != stat['me']['direction']:
+    if inx == stat['now']['enemy']['x'] and iny == stat['now']['enemy']['y']:
+        if stat['now']['enemy']['direction'] != stat['now']['me']['direction']:
             return True
         count = fields_count(stat, storage)
         if count[0] > count[1]:

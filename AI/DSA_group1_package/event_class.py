@@ -26,7 +26,7 @@ class Event:
 
         flag = False
         temp = self.func(stat, storage, self.name)
-        if not gen_func.fail_check(stat, storage, *gen_func.move(stat['me']['x'], stat['me']['y'],
+        if not gen_func.fail_check(stat, storage, *gen_func.move(stat['now']['me']['x'], stat['now']['me']['y'],
                                                                  gen_func.direction_dict[temp])):
             flag = True
         elif self.name == 'Expand':
