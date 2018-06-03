@@ -2,7 +2,7 @@ def play(stat, storage):
     ''''I revised just now'''
     ''''I revised just now'''
     ''''I revised just now'''
-    ''''I revised just now'''
+    ''''I revised just now '''
     ''''哈哈哈哈'''
     from AI.DSA_group1_package.retreat import retreat
     from AI.DSA_group1_package.enclosure import enclosure
