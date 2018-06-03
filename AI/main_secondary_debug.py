@@ -1,5 +1,9 @@
 def play(stat, storage):
-
+    ''''I revised just now'''
+    ''''I revised just now'''
+    ''''I revised just now'''
+    ''''I revised just now '''
+    ''''哈哈哈哈哈  '''
     from AI.DSA_group1_package.retreat import retreat
     from AI.DSA_group1_package.enclosure import enclosure
     from AI.DSA_group1_package.attack import attack
@@ -9,6 +13,6 @@ def play(stat, storage):
 
     # turn = enclosure(stat=stat, storage=storage, order=None)
     turn = attack(stat, storage, last_path=None)
-    # turn = retreat(stat=stat, storage=storage)
+    # turn = retreat(stat=stat, storage=storage, order='Defend')
 
     return turn
