@@ -5,8 +5,8 @@ def fun_enclosure(stat, storage):
     from AI.DSA_group1_package.gen_func import RIGHT
     from AI.DSA_group1_package.gen_func import MIDDLE
 
-    now = stat['me']
-    ene = stat['enemy']
+    now = stat['now']['me']
+    ene = stat['now']['enemy']
     max_dist = path_to(stat, storage, 'enemy', 'me', 'bands')['dis']  # 敌方纸头到我方纸带的最短距离
     try:
         maps = path_to(stat, storage, 'me', 'me', 'fields')['map']
@@ -18,7 +18,7 @@ def fun_enclosure(stat, storage):
     yn = now['y']
     if max_dist == 99999 or max_dist == 0:
         max_dist = abs(xe - xn) + abs(ye - yn)
-    si = storage['size']
+    si = stat['size']
     MAXx = si[0]
     MAXY = si[1]
 
@@ -32,9 +32,9 @@ def fun_enclosure(stat, storage):
         ymax = 0
         for x in range(0, MAXx - 1):
             for y in range(0, MAXY - 1):
-                if stat[name][x][y] == owner and (
-                        stat[name][x - 1][y] is None or stat[name][x - 1][y] == ene['id'] or x == 0) and (
-                        stat[name][x][y - 1] is None or stat[name][x][y - 1] == ene['id'] or y == 0):
+                if stat['now'][name][x][y] == owner and (
+                        stat['now'][name][x - 1][y] is None or stat['now'][name][x - 1][y] == ene['id'] or x == 0) and (
+                        stat['now'][name][x][y - 1] is None or stat['now'][name][x][y - 1] == ene['id'] or y == 0):
                     if mini == 'False':
                         xmin = x
                         mini = True
@@ -43,9 +43,9 @@ def fun_enclosure(stat, storage):
                     else:
                         if y < ymin:
                             ymin = y
-                elif stat[name][x][y] == owner and (
-                        stat[name][x + 1][y] is None or stat[name][x + 1][y] == ene['id'] or x == MAXx - 2) and (
-                        stat[name][x][y + 1] is None or stat[name][x][y + 1] == ene['id'] or y == MAXY - 2):
+                elif stat['now'][name][x][y] == owner and (
+                        stat['now'][name][x + 1][y] is None or stat['now'][name][x + 1][y] == ene['id'] or x == MAXx - 2) and (
+                        stat['now'][name][x][y + 1] is None or stat['now'][name][x][y + 1] == ene['id'] or y == MAXY - 2):
                     if x > xmax:
                         xmax = x
                     if y > ymax:
@@ -64,22 +64,22 @@ def fun_enclosure(stat, storage):
     yru = 0
     yrd = MAXY - 1
     while a1 < 1:
-        if stat['fields'][xm][ylu] is None or stat['fields'][xm][ylu] == ene['id']:
+        if stat['now']['fields'][xm][ylu] is None or stat['now']['fields'][xm][ylu] == ene['id']:
             ylu += 1
         else:
             a1 = 1
     while a2 < 1:
-        if stat['fields'][xm][yld] is None or stat['fields'][xm][yld] == ene['id']:
+        if stat['now']['fields'][xm][yld] is None or stat['now']['fields'][xm][yld] == ene['id']:
             yld -= 1
         else:
             a2 = 1
     while a3 < 1:
-        if stat['fields'][xM][yru] is None or stat['fields'][xM][yru] == ene['id']:
+        if stat['now']['fields'][xM][yru] is None or stat['now']['fields'][xM][yru] == ene['id']:
             yru += 1
         else:
             a3 = 1
     while a4 < 1:
-        if stat['fields'][xM][yrd] is None or stat['fields'][xM][yrd] == ene['id']:
+        if stat['now']['fields'][xM][yrd] is None or stat['now']['fields'][xM][yrd] == ene['id']:
             yrd -= 1
         else:
             a4 = 1
@@ -92,22 +92,22 @@ def fun_enclosure(stat, storage):
     xld = 0
     xrd = MAXx - 1
     while b1 < 1:
-        if stat['fields'][xlu][ym] is None or stat['fields'][xlu][ym] == ene['id']:
+        if stat['now']['fields'][xlu][ym] is None or stat['now']['fields'][xlu][ym] == ene['id']:
             xlu += 1
         else:
             b1 = 1
     while b2 < 1:
-        if stat['fields'][xru][ym] is None or stat['fields'][xru][ym] == ene['id']:
+        if stat['now']['fields'][xru][ym] is None or stat['now']['fields'][xru][ym] == ene['id']:
             xru -= 1
         else:
             b2 = 1
     while b3 < 1:
-        if stat['fields'][xld][yM] is None or stat['fields'][xld][yM] == ene['id']:
+        if stat['now']['fields'][xld][yM] is None or stat['now']['fields'][xld][yM] == ene['id']:
             xld += 1
         else:
             b3 = 1
     while b4 < 1:
-        if stat['fields'][xrd][yM] is None or stat['fields'][xrd][yM] == ene['id']:
+        if stat['now']['fields'][xrd][yM] is None or stat['now']['fields'][xrd][yM] == ene['id']:
             xrd -= 1
         else:
             b4 = 1
@@ -188,7 +188,7 @@ def fun_enclosure(stat, storage):
 
     def shortest(xp, yp, mapss):  # 最短回程, 回到自己领地，在自己领地，则想办法出去
         answe = []
-        fi = stat['me']['direction']
+        fi = stat['now']['me']['direction']
         if mapss == 'excuseme':
             if fi == 0:
                 if 1 < yp < MAXY - 2:

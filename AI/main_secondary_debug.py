@@ -13,6 +13,6 @@ def play(stat, storage):
 
     # turn = enclosure(stat=stat, storage=storage, order=None)
     turn = attack(stat, storage, last_path=None)
-    # turn = retreat(stat=stat, storage=storage)
+    # turn = retreat(stat=stat, storage=storage, order='Defend')
 
     return turn
