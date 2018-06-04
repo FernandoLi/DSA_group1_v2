@@ -116,5 +116,3 @@ def load(stat, storage):
     storage['mode'] = 'wander'
     storage['turn'] = choice('rl')
     storage['count'] = 2
-
-
