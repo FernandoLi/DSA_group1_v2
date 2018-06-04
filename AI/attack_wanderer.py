@@ -1,11 +1,14 @@
-def play(stat, storage):
-    curr_mode = storage[storage['mode']]
-    field, me = stat['now']['fields'], stat['now']['me']
-    storage['enemy'] = stat['now']['enemy']
-    return curr_mode(field, me, storage)
+def init(storage):
+    storage['win_time'] = 0
+    storage['lose_time'] = 0
 
 
 def load(stat, storage):
+    # group1 基础设施准备
+    storage['path_time'] = []
+    distance_divide_factor = 4
+    max_len = 8
+    small_len = 6
     # 基础设施准备
     directions = ((1, 0), (0, 1), (-1, 0), (0, -1))
     from random import choice, randrange
@@ -49,14 +52,17 @@ def load(stat, storage):
             storage['count'] = randrange(1, 3)
             storage['turn'] = choice('rl')
             storage['maxl'] = max(
-                randrange(4, 7),
-                dist(me, storage['enemy']) // 5)
+                randrange(small_len, max_len),
+                dist(me, storage['enemy']) // distance_divide_factor)
             return ''
 
         # 随机前进，转向频率递减
-        if randrange(storage['count']) == 0:
-            storage['count'] += 3
-            return choice('rl')
+        # if randrange(storage['count']) == 0:
+        #     storage['count'] += 3
+        #     return choice('rl')
+        # 倾向于进攻的前进
+        from AI.DSA_group1_package.attack import attack
+        return attack(stat, storage, last_path=None)
 
     # 领地外画圈
     def square(field, me, storage):
@@ -97,13 +103,13 @@ def load(stat, storage):
             storage['count'] = randrange(1, 3)
             storage['maxl'] = max(
                 randrange(4, 7),
-                dist(me, storage['enemy']) // 5)
+                dist(me, storage['enemy']) // distance_divide_factor)
             storage['turn'] = choice('rl')
             return ''
 
         # 前进指定步数
         storage['count'] += 1
-        if storage['count'] > 4:
+        if storage['count'] > small_len:
             storage['mode'] = 'wander'
             storage['count'] = 2
             return choice('rl1234')
@@ -116,3 +122,28 @@ def load(stat, storage):
     storage['mode'] = 'wander'
     storage['turn'] = choice('rl')
     storage['count'] = 2
+
+
+def play(stat, storage):
+    storage['path'] = {'me': {'me': [None], 'enemy': [None, None]},
+                       'enemy': {'enemy': [None], 'me': [None, None]}}
+    curr_mode = storage[storage['mode']]
+    field, me = stat['now']['fields'], stat['now']['me']
+    storage['enemy'] = stat['now']['enemy']
+    return curr_mode(field, me, storage)
+
+
+def summary(match_result, stat, storage):
+    if match_result[0] == stat['now']['me']['id']:
+        storage['win_time'] += 1
+        storage['lose_time'] += 1
+
+    print(match_result)
+    print('Find_path time: %4.4f' % sum(storage['path_time']))
+    print()
+    print()
+
+
+def summaryn(storage):
+    print("me win time: %d" % storage['win_time'])
+    print("me lose time: %d" % storage['lose_time'])
