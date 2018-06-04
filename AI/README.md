@@ -1,12 +1,16 @@
 # 公告
-## 项目规范里有git phcharm 交互使用方法（不要求，手动上传没问题）
-## 工程使用方法
-1.	下面的测试，请将main_package文件和DSA_group1_package文件夹放到平台程序的AI文件夹下。
-2.	切记，用pycharm打开工程，一定要打开paper.io.sessdsa-master这个platform文件夹作为当前工程，否则import报错。
-3.	请不要修改函数和文件的命名。
-4.  每次请修改自己对应的DSA_group1_package中的.py文件。
+## 项目规范里有git phcharm 交互使用方法，要求大家掌握。
 
 # 项目进展
+## 20180604
+### 杨正浩
+- 完成了时间测试，发现了find_path是主要耗时模块。
+### 张浩波
+- 简要更新retreat
+### 李泽凡
+- 尝试了调节现有两级程序，不过失败
+- 在wanderer中加入，attack。打败了wander。
+
 ## 20180603
 ### 张浩波
 - main_secondary_debug函数修改了给retreat传的参数
@@ -65,3 +69,10 @@
 1.	添加了summary函数；
 2.	添加了测试play每次运行时间函数；
 3.	上述通过了测试。
+
+# 历史教程
+## 工程使用方法
+1.	下面的测试，请将main_package文件和DSA_group1_package文件夹放到平台程序的AI文件夹下。
+2.	切记，用pycharm打开工程，一定要打开paper.io.sessdsa-master这个platform文件夹作为当前工程，否则import报错。
+3.	请不要修改函数和文件的命名。
+4.  每次请修改自己对应的DSA_group1_package中的.py文件。
