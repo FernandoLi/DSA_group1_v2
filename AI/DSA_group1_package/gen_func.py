@@ -20,17 +20,27 @@ def move(nowx, nowy, direction):
 
 
 def fail_check(stat, storage, inx, iny):
+    from time import time
+    t0 = time()
     # 返回0，死亡；返回1，目前不会死亡或获胜
     if inx < 0 or iny < 0 or inx >= stat['size'][0] or iny >= stat['size'][1]:
+        t1 = time()
+        storage['dead_time'].append(t1-t0)
         return 0
     if stat['now']['bands'][inx][iny] == stat['now']['me']['id']:
+        t1 = time()
+        storage['dead_time'].append(t1 - t0)
         return 0
     if stat['now']['fields'][inx][iny] == stat['now']['enemy']['id'] and stat['now']['enemy']['x'] == inx and stat['now']['enemy']['y'] == iny:
+        t1 = time()
+        storage['dead_time'].append(t1 - t0)
         return 0
     if inx == stat['now']['enemy']['x'] and iny == stat['now']['enemy']['y']:
         if stat['now']['enemy']['direction'] == stat['now']['me']['direction']:
             count = fields_count(stat, storage)
             if count[0] < count[1]:
+                t1 = time()
+                storage['dead_time'].append(t1 - t0)
                 return 0
     test1 = move(inx, iny, stat['now']['me']['direction'])
     test2 = move(test1[0] ,test1[1] ,stat['now']['me']['direction'] + direction_dict[LEFT])
@@ -44,9 +54,13 @@ def fail_check(stat, storage, inx, iny):
             flag = True
             break
     if not flag:
+        t1 = time()
+        storage['dead_time'].append(t1 - t0)
         return 1
     alist = [[None] * stat['size'][1] for i in range(0, stat['size'][0])]
     temp = space_check(stat, storage, inx, iny, alist)
+    t1 = time()
+    storage['dead_time'].append(t1 - t0)
     if temp:
         return 1
     return 0

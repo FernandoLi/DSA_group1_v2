@@ -1,12 +1,7 @@
 def play(stat, storage):
-    from time import time
     from AI.DSA_group1_package.find_path import path_to
     from AI.DSA_group1_package import gen_func
 
-    print(1)
-    timetemp = [stat['now']['turnleft'][0]]
-    t = time()
-    t0 = int(round(t * 1000))
     # 距离计算的记录，一次比赛的play完成后会删除
     storage['path'] = {'me': {'me': [None], 'enemy': [None, None]},
                        'enemy': {'enemy': [None], 'me': [None, None]}, }
@@ -23,22 +18,17 @@ def play(stat, storage):
         safe_point += 90
     # 我回领地难于对方进攻，安全感*-
     elif path_to(stat, storage, 'me', 'me', 'fields')['dis'] > path_to(stat, storage, 'enemy', 'me', 'bands')['dis']:
-        safe_point -= 10 + 5 * (path_to(stat, storage, 'me', 'me', 'fields')['dis'] -
+        safe_point -= 5 * (path_to(stat, storage, 'me', 'me', 'fields')['dis'] -
                                 path_to(stat, storage, 'enemy', 'me', 'bands')['dis'])
     else:  # 我回领地易于对方进攻，安全感*+
-        safe_point -= 3 * (path_to(stat, storage, 'me', 'me', 'fields')['dis'] -
+        safe_point -= 1 * (path_to(stat, storage, 'me', 'me', 'fields')['dis'] -
                            path_to(stat, storage, 'enemy', 'me', 'bands')['dis'])
 
     if stat['now']['fields'][pos_me[0]][pos_me[1]] == name2:  # 我进入敌方领地，安全感--
         safe_point -= 20
 
-    print(2)
     temp = gen_func.fields_count(stat, storage)
     safe_point += 0.5 * (temp[0] - temp[1])  # 领地越大越安全，安全感*（+/-）
-
-    t = time()
-    t2 = int(round(t * 1000))
-    timetemp.append(['safe_calculate:', t2 - t0])
 
     if stat['now']['fields'][pos_enemy[0]][pos_enemy[1]] == name2:  # 敌方回领地，胜机---
         chance_point -= 60
@@ -54,12 +44,6 @@ def play(stat, storage):
     else:
         chance_point += 1 * path_to(stat, storage, 'enemy', 'me', 'fields')['dis']
 
-    print(3)
-
-    t = time()
-    t3 = int(round(t * 1000))
-    timetemp.append(['chance_calculate:', t3 - t2])
-
     # 如果可以立即获胜，那么进行
     for key, value in gen_func.direction_dict.items():
         new = gen_func.move(stat['now']['me']['x'], stat['now']['me']['y'], value + stat['now']['me']['direction'])
@@ -67,14 +51,9 @@ def play(stat, storage):
             continue
         if gen_func.win_check(stat, storage, *new):
             storage['memory'].append('Win Immediately')
-            t = time()
-            t1 = int(round(t * 1000))
-            timetemp.append(['immediately:', t1 - t3])
             # storage['path'] = None
-            storage['time'].append([storage['nowevent'].name, t1-t0,timetemp])
             return key
 
-    print(4)
     # 之前的事件是否延续
     pastevent = storage['nowevent']
     if pastevent == 'first':
@@ -92,15 +71,10 @@ def play(stat, storage):
                 else:
                     storage['memory'].append([pastname , 1])
                 # storage['path'] = None
-                t = time()
-                t1 = int(round(t * 1000))
-                timetemp.append(['fun_continue:',t1-t3])
-                storage['time'].append([storage['nowevent'].name, t1-t0,timetemp])
                 return temp
             else:
                 pastevent.event_stop(storage)
 
-    print(5)
     # 未延续之前事件，开启新事件
     if safe_point > 0 and chance_point > 30:
         output = storage['event']['Attack'].event_start(stat, storage, pastname)
@@ -109,11 +83,6 @@ def play(stat, storage):
     else:
         output = storage['event']['Defend'].event_start(stat, storage, pastname)
 
-    print(6)
-    t = time()
-    t4 = int(round(t * 1000))
-    timetemp.append(['newevent:', t4 - t3])
-
     if storage['memory'] == []:
         storage['memory'].append([storage['nowevent'].name, 1])
     elif storage['nowevent'].name == storage['memory'][- 1][0]:
@@ -121,8 +90,6 @@ def play(stat, storage):
     else:
         storage['memory'].append([storage['nowevent'].name, 1])
     # storage['path'] = None
-    storage['time'].append([storage['nowevent'].name,t4-t0,timetemp])
-    print(7)
     return output
 
 
@@ -152,18 +119,17 @@ def load(stat , storage):
 
     storage['memory'] = []
     storage['nowevent'] = 'first'
-    storage['time'] = []
+    storage['path_time'] = []
+    storage['event_time'] = []
+    storage['dead_time'] = []
     storage['findpath'] = []
 
 #对局总结函数(单次)
 def summary(match_result , stat , storage):
     print(match_result)
     print(storage['memory'])
-    #print(storage['time'])
-    out = 0
-    for element in storage['time']:
-        out += element[1]
-    print(out)
-    #print(storage['findpath'])
+    print('path',sum(storage['path_time']))
+    print('event',sum(storage['event_time']))
+    print('dead',sum(storage['dead_time']))
     storage['memory'] = None
     storage['path'] = None

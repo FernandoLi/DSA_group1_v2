@@ -182,13 +182,17 @@ class UnorderedList:
 
 
 def find_path(stat, storage, me, desid, des):
+    import time
+    t0 = time.time()
     width = stat['size'][0]  # 场地的宽
     height = stat['size'][1]  # 场地的高
     x = stat['now']['players'][me - 1]['x']  # 己方头部的位置
     y = stat['now']['players'][me - 1]['y']
 
     if des:
-        if stat['now']['fields'][x][y] == desid:  # 头部在己方区域，且寻找到己方区域的最短路径
+        if stat['now']['fields'][x][y] == desid:# 头部在己方区域，且寻找到己方区域的最短路径
+            t1 = time.time()
+            storage['path_time'].append(t1 - t0)
             return {'dis': 0}
         aim = 'fields'
         destination = desid
@@ -210,13 +214,21 @@ def find_path(stat, storage, me, desid, des):
     if aim == 'bands':  # 搜索到纸带的距离，把头部也当作纸带
         mymap[stat['now']['players'][2 - me]['x']][stat['now']['players'][2 - me]['y']] = 0
 
-    if x > 0 and mymap[x - 1][y] == 0 and stat['now']['players'][me - 1]['direction'] != 0:  # 纸带头紧挨着目标区域
+    if x > 0 and mymap[x - 1][y] == 0 and stat['now']['players'][me - 1]['direction'] != 0:# 纸带头紧挨着目标区域
+        t1 = time.time()
+        storage['path_time'].append(t1 - t0)
         return {'dis': 1, 'map': None, 'start': [[x - 1, y]]}
     if x < width - 1 and mymap[x + 1][y] == 0 and stat['now']['players'][me - 1]['direction'] != 2:
+        t1 = time.time()
+        storage['path_time'].append(t1 - t0)
         return {'dis': 1, 'map': None, 'start': [[x + 1, y]]}
     if y > 0 and mymap[x][y - 1] == 0 and stat['now']['players'][me - 1]['direction'] != 1:
+        t1 = time.time()
+        storage['path_time'].append(t1 - t0)
         return {'dis': 1, 'map': None, 'start': [[x, y - 1]]}
     if y < height - 1 and mymap[x][y + 1] == 0 and stat['now']['players'][me - 1]['direction'] != 3:
+        t1 = time.time()
+        storage['path_time'].append(t1 - t0)
         return {'dis': 1, 'map': None, 'start': [[x, y + 1]]}
 
     # 以头部为起点开始搜索
@@ -268,6 +280,8 @@ def find_path(stat, storage, me, desid, des):
         if len(start[length % 2]) == 0:
             break
 
+    t1 = time.time()
+    storage['path_time'].append(t1 - t0)
     if len(temp) != 0:
         # temp是目标区域可以出发的坐标
         return {'dis': mymap[temp[0][0]][temp[0][1]] + 1, 'map': mymap, 'start': temp}
