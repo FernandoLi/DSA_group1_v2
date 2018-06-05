@@ -1,3 +1,10 @@
+def play(stat, storage):
+    curr_mode = storage[storage['mode']]
+    field, me = stat['now']['fields'], stat['now']['me']
+    storage['enemy'] = stat['now']['enemy']
+    return curr_mode(field, me, storage)
+
+
 def load(stat, storage):
     # 基础设施准备
     directions = ((1, 0), (0, 1), (-1, 0), (0, -1))
@@ -109,10 +116,3 @@ def load(stat, storage):
     storage['mode'] = 'wander'
     storage['turn'] = choice('rl')
     storage['count'] = 2
-
-
-def play(stat, storage):
-    curr_mode = storage[storage['mode']]
-    field, me = stat['now']['fields'], stat['now']['me']
-    storage['enemy'] = stat['now']['enemy']
-    return curr_mode(field, me, storage)
