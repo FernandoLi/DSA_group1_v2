@@ -1,5 +1,5 @@
 __doc__ = '''模板AI函数
-
+ 
 （必要）play函数
 
 （可选）load，summary函数
