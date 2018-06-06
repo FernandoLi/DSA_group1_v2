@@ -1,4 +1,5 @@
 from AI.DSA_group1_package.state_class import State
+import random
 ATTACK = 'attack'
 ENCLOSE = 'enclose'
 APPROACH = 'approach'
@@ -53,11 +54,16 @@ class Attack(State):
             pass
         else:  # 还是attack
             pass
-        return 0  # 路径的第一个值
+        # return 0  # 路径的第一个值
+
+        # debug
+        return random.choice('LMR')
+        # debug
 
     def subquent_output(self, stat, storage):
         # 如果计算过了路径，此处应该是规划好的路线，不需要stat和storage。你们可以重载不用这两个值
-        return 0  # 路径接下来的值，这个复杂度我假设是O(1)的，不要从list开头取出来，从尾取出来。
+        # return 0  # 路径接下来的值，这个复杂度我假设是O(1)的，不要从list开头取出来，从尾取出来。
+        return random.choice('LMR')
 
     def trans_where(self, stat, storage, outcome=None):
         # outcome是为了，把下一步走什么列在state_transfer的考虑之中，我们目前可以简化不用，升级版可以用
@@ -65,13 +71,18 @@ class Attack(State):
         # step1: 有几种出去状态的情况，就考虑几种情况
         # Step2: 根据每一种情况，返回下一个状态的名字
         # 下面我把几种情况列举好，不过优先级顺序自己定
-        if 0:  # go to retreat
+
+        # debug
+        rand_num = random.randint(1, 20)
+        if rand_num == 1:  # go to retreat
+            return RETREAT
             pass
         else:  # 还是自己
+            return self.name
             pass
-        return 0
+        # debug
+
+        # return 0
 
     def state_transfer(self, storage, next_state_name):
         storage['state'] = next_state_name
-
-

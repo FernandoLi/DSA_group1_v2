@@ -1,8 +1,13 @@
 from AI.DSA_group1_package.state_class import State
+import random
 ATTACK = 'attack'
 ENCLOSE = 'enclose'
 APPROACH = 'approach'
 RETREAT = 'retreat'
+
+LEFT = 'L'
+RIGHT = 'R'
+MIDDLE = 'M'
 
 
 class Enclose(State):
@@ -45,15 +50,22 @@ class Enclose(State):
     def init_output(self, stat, storage, last_state_name):  # storage几乎用不到，预备以后应用多局历史数据
         # step1: 处理几种进入状态的case：enclose, attack, approach, retreat
         # step2: 根据现在的情况计算出一个路径/或者一个输出值，这个自己看。但是必须有一个返回值
+
         if last_state_name == APPROACH:
             pass
         else:  # 还是enclose
             pass
-        return 0  # 路径的第一个值
+        # return 0  # 路径的第一个值
+
+        # debug
+        return random.choice('LMR')
+        # debug
 
     def subquent_output(self, stat, storage):
         # 如果计算过了路径，此处应该是规划好的路线，不需要stat和storage。你们可以重载不用这两个值
-        return 0  # 路径接下来的值，这个复杂度我假设是O(1)的，不要从list开头取出来，从尾取出来。
+        # 路径接下来的值，这个复杂度我假设是O(1)的，不要从list开头取出来，从尾取出来。
+        # return
+        return random.choice('LMR')
 
     def trans_where(self, stat, storage, outcome=None):
         # outcome是为了，把下一步走什么列在state_transfer的考虑之中，我们目前可以简化不用，升级版可以用
@@ -61,17 +73,24 @@ class Enclose(State):
         # step1: 有几种出去状态的情况，就考虑几种情况
         # Step2: 根据每一种情况，返回下一个状态的名字
         # 下面我把几种情况列举好，不过优先级顺序自己定
-        if 0:  # go to attack
+
+        # debug
+        rand_num = random.randint(1, 20)
+        if rand_num == 1:  # go to attack
+            return ATTACK
             pass
-        elif 0:  # go to retreat
+        elif rand_num == 2:  # go to retreat
+            return RETREAT
             pass
-        elif 0:  # go to approach
+        elif rand_num == 3:  # go to approach
+            return APPROACH
             pass
         else:  # 还是enclose
+            return self.name
             pass
-        return 0
+        # debug
+
+        # return 0
 
     def state_transfer(self, storage, next_state_name):
         storage['state'] = next_state_name
-
-

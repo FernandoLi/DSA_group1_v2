@@ -18,6 +18,7 @@ def load(stat, storage):
     RETREAT = 'retreat'
 
     # 开辟四个状态用的缓存空间
+    storage['store'] = {}
     storage['store'][ATTACK] = None
     storage['store'][ENCLOSE] = None
     storage['store'][APPROACH] = None
@@ -38,6 +39,10 @@ def load(stat, storage):
     storage['state'] = APPROACH
     storage['last_state'] = None
 
+    # debug
+    storage['dead_time'] = []
+    # debug
+
     '''
     初始化函数，向storage中声明必要的初始参数
     若该函数未声明将不执行
@@ -52,13 +57,20 @@ def load(stat, storage):
 
 def play(stat, storage):
     # 清空上次计算的最短路径，这个不够优化，以后不要清空，要加以利用
+    storage['path'] = {}
     storage['path']['me_me_fields'] = None
     storage['path']['me_enermy_bands'] = None
     storage['path']['enermy_enermy_fields'] = None
     storage['path']['enermy_me_bands'] = None
+    from AI.DSA_group1_package import gen_func
+    LEFT = 'L'
+    RIGHT = 'R'
+    MIDDLE = 'M'
+    # debug
+    import random
+    # debug
 
-    curr_state = storage[storage['mode']]
-
+    curr_state = storage[storage['state']]
     '''
     AI函数，返回指令决定玩家转向方式
     该函数超时或报错将判负
@@ -72,7 +84,22 @@ def play(stat, storage):
         2. 首字母为'r'或'R'的字符串 - 代表右转
         3. 其余 - 代表直行
     '''
-    return curr_state.output_func(stat, storage, None)
+    outcome = curr_state.output_func(stat, storage, storage['last_state'])
+    # debug
+    if curr_state.name != 'Balabala':
+        # 请改成你的state名称，比如'attack'。这里是，只有当现在不是你的state才会deadcheck，然后random选一个值走，
+        direction_list = [LEFT, RIGHT, MIDDLE]
+        random.shuffle(direction_list)
+        for i in direction_list:
+            x = stat['now']['me']['x']
+            y = stat['now']['me']['y']
+            test_point = gen_func.move(x, y, stat['now']['me']['direction'] + gen_func.direction_dict[i])
+            temp = gen_func.fail_check(stat, storage, test_point[0], test_point[1])
+            if temp == 1:
+                outcome = i
+                break
+    return outcome
+    # debug
 
 
 def summary(match_result, stat, storage):
