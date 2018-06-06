@@ -1,8 +1,29 @@
 def play(stat, storage):
+    from AI.DSA_group1_package.find_path import path_to
+    import time
+    storage['path'] = {'me': {'me': [None], 'enemy': [None, None]},
+                       'enemy': {'enemy': [None], 'me': [None, None]}}
+    storage['enemy'] = stat['now']['enemy']
     curr_mode = storage[storage['mode']]
     field, me = stat['now']['fields'], stat['now']['me']
     storage['enemy'] = stat['now']['enemy']
-    return curr_mode(field, me, storage)
+    t1 = time.time()
+    a = path_to(stat, storage, 'me', 'me', 'fields')
+    b = path_to(stat, storage, 'me', 'enemy', 'bands')
+    c = path_to(stat, storage, 'enemy', 'enemy', 'fields')
+    d = path_to(stat, storage, 'enemy', 'me', 'bands')
+    t2 = time.time()
+
+    try:
+        storage['sumtime']
+    except KeyError:
+        storage['sumtime'] = 0
+
+    storage['sumtime'] += (t2 - t1)
+    if a is not None and b is not None and c is not None and d is not None:
+        return curr_mode(field, me, storage)
+    else:
+        return 'x'
 
 
 def load(stat, storage):
@@ -116,3 +137,12 @@ def load(stat, storage):
     storage['mode'] = 'wander'
     storage['turn'] = choice('rl')
     storage['count'] = 2
+
+
+def summary(match_result, stat, storage):
+    # print('Find_path time: %4.4f' % sum(storage['path_time']))
+    # print('copy time: ', storage['copytime'])
+    # print('calculate time: ', storage['caltime'])
+    print('time of path_to:', storage['sumtime'])
+    print('cycle end')
+    print()
