@@ -35,6 +35,7 @@ def path_to(stat, storage, type):
 
     return 0
 
+
 def find_path(stat, storage, start, target, type, route_num):
 
     return 0
