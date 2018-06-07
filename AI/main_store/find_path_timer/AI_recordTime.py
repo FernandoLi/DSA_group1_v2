@@ -1,18 +1,38 @@
 def play(stat, storage):
-    from AI.DSA_group1_package.find_path import path_to
+    from AI.DSA_group1_package.find_path_new import path_to
     import time
-    storage['path'] = {'me': {'me': [None], 'enemy': [None, None]},
-                       'enemy': {'enemy': [None], 'me': [None, None]}}
+    # 初始化，这次用于新的find_path剪枝的debug
+    # storage['path'] = {'me': {'me': [None], 'enemy': [None, None]},
+    #                    'enemy': {'enemy': [None], 'me': [None, None]}}
+    storage['bands'] = {'me': [], 'enemy': []}
+    storage['me_me_fields'] = None
+    storage['me_enemy_bands'] = None
+    storage['enemy_enemy_fields'] = None
+    storage['enemy_me_bands'] = None
+
+    # 初始化
     storage['enemy'] = stat['now']['enemy']
     curr_mode = storage[storage['mode']]
     field, me = stat['now']['fields'], stat['now']['me']
     storage['enemy'] = stat['now']['enemy']
+
     t1 = time.time()
-    a = path_to(stat, storage, 'me', 'me', 'fields')
-    b = path_to(stat, storage, 'me', 'enemy', 'bands')
-    c = path_to(stat, storage, 'enemy', 'enemy', 'fields')
-    d = path_to(stat, storage, 'enemy', 'me', 'bands')
+    a = path_to(stat, storage, 'me_me_fields')
+    b = path_to(stat, storage, 'me_enemy_bands')
+    c = path_to(stat, storage, 'enemy_enemy_fields')
+    d = path_to(stat, storage, 'enemy_me_bands')
+    # a = path_to(stat, storage, 'me', 'me', 'fields')
+    # b = path_to(stat, storage, 'me', 'enemy', 'bands')
+    # c = path_to(stat, storage, 'enemy', 'enemy', 'fields')
+    # d = path_to(stat, storage, 'enemy', 'me', 'bands')
     t2 = time.time()
+
+    # debug
+    print(a)
+    print(b)
+    print(c)
+    print(d)
+    # debug
 
     try:
         storage['sumtime']

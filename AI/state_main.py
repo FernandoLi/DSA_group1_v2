@@ -37,7 +37,6 @@ def load(stat, storage):
 
     # storage['state']记录当前状态的名字
     storage['state'] = APPROACH
-    storage['last_state'] = None
 
     # debug
     storage['dead_time'] = []
@@ -56,6 +55,10 @@ def load(stat, storage):
 
 
 def play(stat, storage):
+    ATTACK = 'attack'
+    ENCLOSE = 'enclose'
+    APPROACH = 'approach'
+    RETREAT = 'retreat'
     # 清空上次计算的最短路径，这个不够优化，以后不要清空，要加以利用
     storage['path'] = {}
     storage['path']['me_me_fields'] = None
@@ -84,9 +87,10 @@ def play(stat, storage):
         2. 首字母为'r'或'R'的字符串 - 代表右转
         3. 其余 - 代表直行
     '''
-    outcome = curr_state.output_func(stat, storage, storage['last_state'])
+
+    outcome = curr_state.output_func(stat, storage, storage['state'])
     # debug
-    if curr_state.name != 'Balabala':
+    if curr_state.name != ENCLOSE and curr_state.name != APPROACH:
         # 请改成你的state名称，比如'attack'。这里是，只有当现在不是你的state才会deadcheck，然后random选一个值走，
         direction_list = [LEFT, RIGHT, MIDDLE]
         random.shuffle(direction_list)

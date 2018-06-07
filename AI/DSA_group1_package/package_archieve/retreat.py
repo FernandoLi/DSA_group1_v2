@@ -51,7 +51,7 @@ def retreat(stat, storage, order):
         ans = storage['retreat'].pop()
         return coordinateToDirection(stat, me, ans[0], ans[1])
 
-    from AI.DSA_group1_package.find_path import path_to
+    from AI.DSA_group1_package.find_path_new import path_to
     iToMyFields = path_to(stat, storage, 'me', 'me', 'fields')
     eToMyBands = path_to(stat, storage, 'enemy', 'me', 'bands')
     retreatDis = iToMyFields['dis']  # 我回到己方区域的的最短距离

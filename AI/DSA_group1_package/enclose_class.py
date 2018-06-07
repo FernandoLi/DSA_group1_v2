@@ -9,8 +9,10 @@ LEFT = 'L'
 RIGHT = 'R'
 MIDDLE = 'M'
 
+directions = ((1, 0), (0, 1), (-1, 0), (0, -1))
 
 class Enclose(State):
+
 
     # 这里如果需要新的初始化函数，可以这样写，不用的话可以省略。
     # def __init__(self, name, store):  # store = storage['statename_store']
@@ -47,50 +49,155 @@ class Enclose(State):
 
         return outcome
 
-    def init_output(self, stat, storage, last_state_name):  # storage几乎用不到，预备以后应用多局历史数据
+    def init_output(self, stat, storage, last_state_name):
+
+        me, ene = stat['now']['me'], stat['now']['enemy']
+        storage['maxi'] = (abs(me['x'] - ene['x']) + abs(me['y'] - ene['y'])) // 8
+        storage['turn'] = LEFT
+        storage['cacu'] = 0
+        storage['count'] = 0
         # step1: 处理几种进入状态的case：enclose, attack, approach, retreat
         # step2: 根据现在的情况计算出一个路径/或者一个输出值，这个自己看。但是必须有一个返回值
-
-        if last_state_name == APPROACH:
-            pass
-        else:  # 还是enclose
-            pass
         # return 0  # 路径的第一个值
-
-        # debug
-        return random.choice('LMR')
-        # debug
+        if me['direction'] % 2:  # y轴不出界
+            nexty = me['y'] + directions[me['direction']][1]
+            leftx = me['x'] + directions[me['direction'] - 1][0]
+            if nexty < 0 or nexty >= stat['size'][1]:
+                storage['count'] = 0
+                storage['cacu'] += 1
+                if leftx < 0 or leftx >= stat['size'][0]:
+                    storage['turn'] = RIGHT
+                    return RIGHT
+                else:
+                    return LEFT
+        else:  # x轴不出界
+            nextx = me['x'] + directions[me['direction']][0]
+            lefty = me['y'] + directions[me['direction'] - 1][1]
+            if nextx < 0 or nextx >= stat['size'][0]:
+                storage['count'] = 0
+                storage['cacu'] += 1
+                if lefty < 0 or lefty >= stat['size'][1]:
+                    storage['turn'] = RIGHT
+                    return RIGHT
+                else:
+                    return LEFT
+        storage['count'] += 1
+        if storage['count'] >= storage['maxi']:
+            storage['count'] = 0
+            storage['cacu']+=1
+            if me['direction'] % 2:
+                leftx = me['x'] + directions[me['direction'] - 1][0]
+                if leftx < 0 or leftx >= stat['size'][0]:
+                    storage['turn'] = RIGHT
+                    return RIGHT
+                else:
+                    return LEFT
+            else:
+                lefty = me['y'] + directions[me['direction'] - 1][1]
+                if lefty < 0 or lefty >= stat['size'][1]:
+                    storage['turn'] = RIGHT
+                    return RIGHT
+                else:
+                    return LEFT
+        else:
+            return MIDDLE
 
     def subquent_output(self, stat, storage):
+        me, ene = stat['now']['me'], stat['now']['enemy']
+        def enclone(stat, storage):
+            if me['direction'] % 2:  # y轴不出界
+                nexty = me['y'] + directions[me['direction']][1]
+                leftx = me['x'] + directions[me['direction'] - 1][0]
+                if nexty < 0 or nexty >= stat['size'][1]:
+                    storage['count'] = 0
+                    storage['cacu'] += 1
+                    if leftx < 0 or leftx >= stat['size'][0]:
+                        storage['turn'] = RIGHT
+                        return RIGHT
+                    else:
+                        return LEFT
+            else:  # x轴不出界
+                nextx = me['x'] + directions[me['direction']][0]
+                lefty = me['y'] + directions[me['direction'] - 1][1]
+                if nextx < 0 or nextx >= stat['size'][0]:
+                    storage['count'] = 0
+                    storage['cacu'] += 1
+                    if lefty < 0 or lefty >= stat['size'][1]:
+                        storage['turn'] = RIGHT
+                        return RIGHT
+                    else:
+                        return LEFT
+            storage['count'] += 1
+            if storage['count'] >= storage['maxi']:
+                storage['count'] = 0
+                storage['cacu'] += 1
+                if me['direction'] % 2:
+                    leftx = me['x'] + directions[me['direction'] - 1][0]
+                    if leftx < 0 or leftx >= stat['size'][0]:
+                        storage['turn'] = RIGHT
+                        return RIGHT
+                    else:
+                        return LEFT
+                else:
+                    lefty = me['y'] + directions[me['direction'] - 1][1]
+                    if lefty < 0 or lefty >= stat['size'][1]:
+                        storage['turn'] = RIGHT
+                        return RIGHT
+                    else:
+                        return LEFT
+            else:
+                return MIDDLE
+
+        def encltwo(stat, storage):
+            if me['direction'] % 2:  # y轴不出界
+                nexty = me['y'] + directions[me['direction']][1]
+                if nexty < 0 or nexty >= stat['size'][1]:
+                    storage['count'] = 0
+                    return storage['turn']
+            else:  # x轴不出界
+                nextx = me['x'] + directions[me['direction']][0]
+                if nextx < 0 or nextx >= stat['size'][0]:
+                    storage['count'] = 0
+                    return storage['turn']
+            storage['count'] += 1
+            if storage['count'] >= storage['maxi']-1:
+                storage['count'] = 0
+                return storage['turn']
+            else:
+                return 'M'
+        if storage['cacu'] < 4:
+            return enclone(stat, storage)
+        elif storage['cacu'] == 4:
+            storage['cacu'] += 1
+            storage['count'] = 0
+            return RIGHT
+        else:
+            return encltwo(stat, storage)
+
+
         # 如果计算过了路径，此处应该是规划好的路线，不需要stat和storage。你们可以重载不用这两个值
         # 路径接下来的值，这个复杂度我假设是O(1)的，不要从list开头取出来，从尾取出来。
         # return
-        return random.choice('LMR')
+
 
     def trans_where(self, stat, storage, outcome=None):
-        # outcome是为了，把下一步走什么列在state_transfer的考虑之中，我们目前可以简化不用，升级版可以用
-
-        # step1: 有几种出去状态的情况，就考虑几种情况
-        # Step2: 根据每一种情况，返回下一个状态的名字
-        # 下面我把几种情况列举好，不过优先级顺序自己定
-
-        # debug
-        rand_num = random.randint(1, 20)
-        if rand_num == 1:  # go to attack
-            return ATTACK
-            pass
-        elif rand_num == 2:  # go to retreat
-            return RETREAT
-            pass
-        elif rand_num == 3:  # go to approach
-            return APPROACH
-            pass
-        else:  # 还是enclose
+        me, ene = stat['now']['me'], stat['now']['enemy']
+        if storage['cacu'] < 4:
             return self.name
-            pass
-        # debug
+        elif storage['cacu']==4:
+            if stat['now']['fields'][me['x']][me['y']] != me['id']:
+                return RETREAT
+            if storage['turn'] == 'Right':
+                # 变成approach
+                return APPROACH
+            else:
+                return self.name
+        else:
+            if stat['now']['fields'][me['x']][me['y']] == me['id']:
+                return APPROACH
+            else:
+                return self.name
 
-        # return 0
 
     def state_transfer(self, storage, next_state_name):
         storage['state'] = next_state_name

@@ -1,6 +1,6 @@
 def fun_enclosure(stat, storage):
     from random import choice
-    from AI.DSA_group1_package.find_path import path_to
+    from AI.DSA_group1_package.find_path_new import path_to
     from AI.DSA_group1_package.gen_func import LEFT
     from AI.DSA_group1_package.gen_func import RIGHT
     from AI.DSA_group1_package.gen_func import MIDDLE

@@ -48,8 +48,8 @@ def attack(stat, storage, last_path=None):  # last_path是之前决策的路径
                 p = MIDDLE
         return p
 
-    from AI.DSA_group1_package.find_path import path_to
-    from AI.DSA_group1_package.find_path import find_path
+    from AI.DSA_group1_package.find_path_new import path_to
+    from AI.DSA_group1_package.find_path_new import find_path
 
     east = 0
     west = 0
