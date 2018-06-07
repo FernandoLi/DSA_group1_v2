@@ -60,11 +60,10 @@ def play(stat, storage):
     APPROACH = 'approach'
     RETREAT = 'retreat'
     # 清空上次计算的最短路径，这个不够优化，以后不要清空，要加以利用
-    storage['path'] = {}
-    storage['path']['me_me_fields'] = None
-    storage['path']['me_enermy_bands'] = None
-    storage['path']['enermy_enermy_fields'] = None
-    storage['path']['enermy_me_bands'] = None
+    storage['me_me_fields'] = None
+    storage['me_enemy_bands'] = None
+    storage['enemy_enemy_fields'] = None
+    storage['enemy_me_bands'] = None
     from AI.DSA_group1_package import gen_func
     LEFT = 'L'
     RIGHT = 'R'
