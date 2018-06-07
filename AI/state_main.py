@@ -20,9 +20,9 @@ def load(stat, storage):
     # 开辟四个状态用的缓存空间
     storage['store'] = {}
     storage['store'][ATTACK] = None
-    storage['store'][ENCLOSE] = None
-    storage['store'][APPROACH] = None
-    storage['store'][RETREAT] = None
+    storage['store'][ENCLOSE] = {}
+    storage['store'][APPROACH] = {}
+    storage['store'][RETREAT] = {}
 
     # 定义四个状态的类
     from AI.DSA_group1_package.attack_class import Attack
