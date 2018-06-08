@@ -12,38 +12,6 @@ MIDDLE = 'M'
 directions = ((1, 0), (0, 1), (-1, 0), (0, -1))
 class Approach(State):
 
-
-    def output_func(self, stat, storage, last_state_name):
-        if self.name != last_state_name:
-            # 上一轮的状态和这一轮的状态不一致时
-
-            outcome = self.init_output(stat, storage, last_state_name)
-
-            next_state_name = self.trans_where(stat, storage)  # 需要根据当前的状态
-            self.state_transfer(storage, next_state_name)
-
-            pass  # 意思是，状态转换，首次调用一定要有要返回值，outcome保留到底
-
-        else:
-            next_state_name = self.trans_where(stat, storage)  # 需要根据当前的状态
-
-            if next_state_name == self.name:
-                # 上一轮的状态和这一轮一致时：
-                outcome = self.subquent_output(stat, storage)  # 我预想O(1)的复杂度
-
-                pass  # 意思是，事件继续了，所以用这个outcome
-
-            else:
-                # 如果状态转换了，那么交给笑一个函数的init_output来返回值
-
-                self.state_transfer(storage, next_state_name)
-
-                outcome = storage[next_state_name].output_func(stat, storage, self.name)
-
-                pass  # 这时候outcome就是下一状态init_output计算出来的值
-
-        return outcome
-
     def init_output(self, stat, storage, last_state_name):
         me = stat['now']['me']
         (enex, eney) = (stat['now']['enemy']['x'], stat['now']['enemy']['y'])
@@ -110,5 +78,3 @@ class Approach(State):
         else:
             return self.name
 
-    def state_transfer(self, storage, next_state_name):
-        storage['state'] = next_state_name
