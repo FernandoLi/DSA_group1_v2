@@ -1,7 +1,3 @@
-# debug
-from AI.DSA_group1_package.package_archieve.find_path_list import find_path
-# debug
-
 INF = float("inf")
 ROUTE_NUM = 5
 
@@ -13,13 +9,17 @@ path_to
     'me_enemy_bands'：我到敌人纸带
     'enemy_enemy_fields'：敌人回自己领地
     'enemy_me_bands'：敌人到我的纸带
+    nodes：假想的墙壁。搜索路径是不能走这里。
 输出：
-    是线面两种情况中的一个，但是不管怎么样，都输出一个list，其中至少有一个tupple。
+    返回一个元组
+    元组的第一个元素代表最短距离。最短距离为0说明在目标区域。最短距离为1说明紧挨着目标区域，最短距离为inf说明无法到达最短区域。
+    元组的第二个元素是生成的地图。
+    元组的第三个元素是最短路径
+    元组的第四个元素是最短路径的终点。这一点是紧挨着目标区域的的点，不是目标区域上的点。
 '''
 
 
-def path_to(stat, storage, this_type):  # 如果算过path_to了，就不算了，如果没算过，就接着算。
-
+def path_to(stat, storage, this_type, nodes=None):  # 如果算过path_to了，就不算了，如果没算过，就接着算。
     me_id = stat['now']['me']['id']
     enemy_id = stat['now']['enemy']['id']
 
@@ -28,149 +28,185 @@ def path_to(stat, storage, this_type):  # 如果算过path_to了，就不算了�
         if storage[this_type] is not None:
             outcome = storage[this_type]
         else:
-            outcome = find_path(stat, storage, me_id, me_id, 'fields', ROUTE_NUM)
+            outcome = find_path(stat, storage, me_id, me_id, 1, nodes)
     elif this_type == 'enemy_enemy_fields':
         if storage[this_type] is not None:
             outcome = storage[this_type]
         else:
-            outcome = find_path(stat, storage, enemy_id, enemy_id, 'fields', ROUTE_NUM)
+            outcome = find_path(stat, storage, enemy_id, enemy_id, 1, nodes)
     elif this_type == 'me_enemy_bands':
         if storage[this_type] is not None:
             outcome = storage[this_type]
         else:
-            outcome = clipped_find_path(stat, storage, me_id)
-            if outcome is None:
-                outcome = find_path(stat, storage, me_id, enemy_id, 'bands', ROUTE_NUM)
+            outcome = find_path(stat, storage, me_id, enemy_id, 0, nodes)
     elif this_type == 'enemy_me_bands':
         if storage[this_type] is not None:
             outcome = storage[this_type]
         else:
-            outcome = clipped_find_path(stat, storage, enemy_id)
-            if outcome is None:
-                outcome = find_path(stat, storage, me_id, enemy_id, 'bands', ROUTE_NUM)
-
+            outcome = find_path(stat, storage, enemy_id, me_id, 0, nodes)
     return outcome
 
 
-'''
-clipped_find_path 是find_path的剪枝版本, 目前只能处理bands的剪枝
-输入：
-    - start 是起始的点的id (我的头或者enermy的头)，
-    - target 是目标对应的id
-输出：
-    - 如果可以剪枝，那么返回如下
-        一个list，其中只有一个tuple
-        - shortest_dist 是一个int返回最短路径的长度
-        - route_list = 'clipped'
-        - target_point 是一个点的坐标（x, y），表示这条路径达到的目标点
-    - 返回值特殊情况 
-        1. 无路可走，或者说是找不到。
-        shortest_dist = INF
-        route_list = None
-        target = None
-    - 如果暂时不能剪枝，返回 None
-复杂度：
-    如果自己纸带长度m，对方纸带长度n，复杂度O(n * m)
-'''
+# stat是状态，me是自己的id，desid是des对应的id，des指区域或者纸带，区域为1，纸带为0
+def find_path(stat, storage, me, desid, des, nodes=None):
+    import queue
+    import time
+    width = stat['size'][0]                   # 场地的宽
+    height = stat['size'][1]                  # 场地的高
+    x = stat['now']['me']['x']                # 己方头部的位置
+    y = stat['now']['me']['y']
+    ex = stat['now']['enemy']['x']            # 敌方头部位置
+    ey = stat['now']['enemy']['y']
+    mymap = []                                # 记录路径状态，以目标区域为递推起点
+    try:
+        storage['test']
+    except KeyError:
+        storage['test'] = []
+    storage['test'] = []
+    try:
+        storage['num']
+    except KeyError:
+        storage['num'] = 0
 
+    class Node:
+        def __init__(self, nodex, nodey):
+            self.nodex = nodex
+            self.nodey = nodey
+            self.cmp = 3 * (abs(self.nodex - x) + abs(self.nodey - y)) + mymap[self.nodex][self.nodey]
 
-def clipped_find_path(stat, storage, start_id):
-    # 确定起始点，起始纸带和目标纸带
-    if start_id == stat['now']['me']['id']:
-        start_x = stat['now']['me']['x']
-        start_y = stat['now']['me']['y']
-        start_bands = storage['bands']['me']
-        target_bands = storage['bands']['enemy']
+        def __lt__(self, other):
+            return self.cmp < other.cmp
+
+    storage['num'] += 1
+    if des:
+        if stat['now']['fields'][x][y] == desid:  # 头部在己方区域，且寻找到己方区域的最短路径
+            return 0, None, None, None
+        aim = 'fields'
+        destination = desid
     else:
-        start_x = stat['now']['enemy']['x']
-        start_y = stat['now']['enemy']['y']
-        start_bands = storage['bands']['enemy']
-        target_bands = storage['bands']['me']
+        aim = 'bands'
+        destination = 3 - me
 
-    # 寻找离自己距离最近的纸带上的点
-    target_x = None
-    target_y = None
-    min_dist = INF
-    for i in range(0, len(target_bands)):  # 此处包括对方的头，对方头下一回合变成纸带
-        px = target_bands[i][0]
-        py = target_bands[i][1]
-        temp = abs(start_x - px) + abs(start_y - py)
-        if temp < min_dist:
-            min_dist = temp
-            target_x = px
-            target_y = py
-    if min_dist == INF:  # 说明没有对方的纸带，这时候直接返回找不到
-        outcome = (INF, None, None)
-        return outcome
+    try:
+        storage['copytime']
+    except KeyError:
+        storage['copytime'] = 0
 
-    # 看看有几个自己的纸带在所形成的方格之内
-    count = 0
-    for j in range(len(start_bands) - 2, -1, -1):
-        # 此处不包括自己的head，并且从后往前找，越是后面的，月容易堵自己。
-        if start_x <= start_bands[j][0] <= target_x \
-                and start_y <= start_bands[j][1] <= target_y:
-            # 如果自己纸带在两方的head行程的rectangular中，++
-            count += 1
-            if count >= 3:
-                break
+    try:
+        storage['caltime']
+    except KeyError:
+        storage['caltime'] = 0
 
-    # 判断是否能够使用剪枝，并且根据情况计算返回值
-    def sgn(x, y):
-        if x > y:
-            return 1
-        else:
-            return -1
+    t1 = time.time()
+    for i in range(width):
+        mymap.append([])
+        for j in range(height):
+            if stat['now'][aim][i][j] == destination:  # 目标区域0
+                mymap[i].append(0)
+            elif stat['now']['bands'][i][j] == me:     # 己方纸带-1
+                mymap[i].append(-1)
+            else:                                      # 空白区域-4
+                mymap[i].append(-4)
+    mymap[x][y] = -2                                   # 己方头部-2
+    if aim == 'bands':                                 # 搜索到纸带的距离，把头部也当作纸带
+        mymap[ex][ey] = 0                              # 对方头部0
+    if nodes is not None:
+        for index in nodes:
+            mymap[index[0]][index[1]] = 0
 
-    outcome = None
-    min_abs = min(abs(start_x - target_x), abs(start_y - target_y))
-    if min_abs == 0:  # 在一条直线上
-        if count == 0:  # rectangular中有0个自己纸带才能坐标相减
-            outcome = (min_dist, 'clipped', (target_x, target_y))
-    elif min_abs == 1:  # 错开一格
-        if count <= 1:  # rectangular中有0-1个自己纸带才能坐标相减
-            outcome = (min_dist, 'clipped', (target_x, target_y))
-    else:  # 至少错开两格
-        '''如果有dead_check，这里可以剪枝更多，考虑到count = 3的情况，待定。'''
-        if count <= 1:  # rectangular中有0-1个自己纸带才能坐标相减
-            outcome = (min_dist, 'clipped', (target_x, target_y))
-        elif count == 2:
-            dx = sgn(target_x, start_x)
-            dy = sgn(target_y, start_y)
-            point_dx = (start_x + dx, start_y)
-            point_dy = (start_x, start_y + dy)
-            if stat['now']['bands'][point_dx[0]][point_dx[1]] != start_id \
-                    or stat['now']['bands'][point_dy[0]][point_dy[1]] != start_id:
-                # 如果朝向目标的两边的相邻两格，至少有一个不是我的纸带，那么可以剪枝
-                outcome = (min_dist, 'clipped', (target_x, target_y))
+    t2 = time.time()
 
-    return outcome
+    # 纸带头紧挨着目标区域
+    if x > 0 and mymap[x - 1][y] == 0 and stat['now']['players'][me - 1]['direction'] != 0:
+        return 1, None, [[x - 1, y]], [x - 1, y]
+    if x < width - 1 and mymap[x + 1][y] == 0 and stat['now']['players'][me - 1]['direction'] != 2:
+        return 1, None, [[x + 1, y]], [x + 1, y]
+    if y > 0 and mymap[x][y - 1] == 0 and stat['now']['players'][me - 1]['direction'] != 1:
+        return 1, None, [[x, y - 1]], [x, y - 1]
+    if y < height - 1 and mymap[x][y + 1] == 0 and stat['now']['players'][me - 1]['direction'] != 3:
+        return 1, None, [[x, y + 1]], [x, y + 1]
 
+    # 以区域边缘为起点开始搜索，纸带头不紧挨目标区域
+    start = queue.PriorityQueue()  # 记录搜索的起点
+    for i in range(width):
+        for j in range(height):
+            if mymap[i][j] == 0:
+                if (i > 0 and mymap[i-1][j] == -4) or (i < width-1 and mymap[i+1][j] == -4) or (j > 0 and mymap[i][j-1] == -4) or (j < height-1 and mymap[i][j+1] == -4):
+                    start.put(Node(i, j))
 
-'''
-find_path
-输入参数定义如下：
-    - start 是起始的点的id (我的头或者enermy的头)，
-    - target 是目标对应的id
-    - this_type 指区域或者纸带，区域为'field'，纸带为'bands'
-    - route_num 要找到最短路径的条数，尽可能找到的最短路径的条数。最后返回的tuple长度可能小于route_num
-返回值定义：
-    - 待定返回一个3元tuple组成的list[(shortest_dist, route_list, target_point)]
-    - 其中每找到的一个最短路径构成一个tuple, tuple的排列顺序按照路径长度依次递增
-        - shortest_dist 是一个int返回最短路径的长度
-        - route_list 是一个（x, y）坐标的 list，表示从start开始（不包含）到一个target中的一个点（包含）的路径
-        - target_point 是一个点的坐标（x, y），表示这条路径达到的目标点
-    返回值特殊情况：
-    1. 无路可走，或者说是找不到。
-        shortest_dist = INF
-        route_list = None
-        target = None
-    2. 已经到达返回['dis']为0的字典(无其他key)
-        shortest_dist = 0
-        route_list = None
-        target = start(x, y)（开始点坐标）
-'''
+    if start.empty():                                    # 没有目标区域，比如没有纸带
+        return INF, mymap, None, None
 
+    count = False
+    temp = []
+    while (not start.empty()) and not count:             # 搜索路径
+        current = start.get()
+        i = current.nodex
+        j = current.nodey
+        index = mymap[i][j] + 1
+        if i > 0:
+            if mymap[i - 1][j] == -4:
+                mymap[i - 1][j] = index
+                start.put(Node(i - 1, j))
+            elif mymap[i - 1][j] == -2:
+                count = True
+                temp.append([i, j])
+                continue
+        if i < width - 1:
+            if mymap[i + 1][j] == -4:
+                mymap[i + 1][j] = index
+                start.put(Node(i + 1, j))
+            elif mymap[i + 1][j] == -2:
+                count = True
+                temp.append([i, j])
+                continue
+        if j > 0:
+            if mymap[i][j - 1] == -4:
+                mymap[i][j - 1] = index
+                start.put(Node(i, j - 1))
+            elif mymap[i][j - 1] == -2:
+                count = True
+                temp.append([i, j])
+                continue
+        if j < height - 1:
+            if mymap[i][j + 1] == -4:
+                mymap[i][j + 1] = index
+                start.put(Node(i, j + 1))
+            elif mymap[i][j + 1] == -2:
+                count = True
+                temp.append([i, j])
+                continue
+    t3 = time.time()
 
-# def find_path(stat, storage, start, target, this_type, route_num):
-#
-#     return 0
+    storage['copytime'] += t2 - t1
+    storage['caltime'] += t3 - t2
+
+    if len(temp) != 0:
+        # temp是头部周围可以走的坐标
+        # 函数从来没有运行到这里
+        try:
+            storage['test']
+        except KeyError:
+            storage['test'] = []
+        paths = [temp[0]]
+        index = mymap[paths[0][0]][paths[0][1]] - 1
+        i = paths[0][0]  # 记录起点坐标
+        j = paths[0][1]
+        while index > 0:
+            if i > 0 and mymap[i - 1][j] == index:
+                paths.append([i - 1, j])
+                i = i - 1
+            elif i < width - 1 and mymap[i + 1][j] == index:
+                paths.append([i + 1, j])
+                i = i + 1
+            elif j > 0 and mymap[i][j - 1] == index:
+                paths.append([i, j - 1])
+                j = j - 1
+            elif j < height - 1 and mymap[i][j + 1] == index:
+                paths.append([i, j + 1])
+                j = j + 1
+            index -= 1
+        # storage['test'].append(paths)
+        return mymap[paths[0][0]][paths[0][1]] + 1, mymap, paths, paths[-1]
+    else:
+        return INF, mymap, None, None
