@@ -127,7 +127,7 @@ class Enclose(State):
             storage['store'][ENCLOSE]['count'] = 0
             return storage['store'][ENCLOSE]['turn']
         else:
-            return 'M'
+            return MIDDLE
 
     def subquent_output(self, stat, storage):
         if storage['store'][ENCLOSE]['cacu'] < 4:
