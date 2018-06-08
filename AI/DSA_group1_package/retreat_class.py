@@ -31,7 +31,7 @@ class Retreat(State):
 
             if next_state_name == self.name:
                 # 上一轮的状态和这一轮一致时：
-                outcome = self.subquent_output(stat, storage)  # 我预想O(1)的复杂度
+                outcome = self.init_output(stat, storage, last_state_name)  # 我预想O(1)的复杂度
 
                 pass  # 意思是，事件继续了，所以用这个outcome
 
@@ -47,6 +47,7 @@ class Retreat(State):
         return outcome
 
     def init_output(self, stat, storage, last_state_name):  # storage几乎用不到，预备以后应用多局历史数据
+        from AI.DSA_group1_package.find_path import path_to
         # step1: 处理几种进入状态的case：enclose, attack, approach, retreat
         # step2: 根据现在的情况计算出一个路径/或者一个输出值，这个自己看。但是必须有一个返回值
         me = stat['now']['me']['id']
@@ -67,80 +68,25 @@ class Retreat(State):
             else:
                 return self.coordinateToDirection(stat, xx, yy + 1)
 
-        iToMyFields = storage['path']['me_me_fields']
-        retreatDis = storage['path']['me_me_fields'][0][0]                # 我回到己方区域的的最短距离
-        temp = storage['path']['me_me_fields'][0][2]
+        me_me_fields = path_to(stat, storage, 'me_me_fields')
+        dis_me_me_fields = me_me_fields[0]                # 我回到己方区域的的最短距离
+        temp = me_me_fields[3]
 
         # case2: 无路可走
         if temp is None:  # 如果无路可走，直走
-            return MIDDLE
+            return 'x'
 
         # case3: 紧挨着边界
-        if retreatDis == 1:  # 距离为1
+        if dis_me_me_fields == 1:  # 距离为1
             return self.coordinateToDirection(stat, temp[0], temp[1])
 
-        # case4: 敌人无法到达我的纸带
-        if storage['path']['enemy_me_bands'][0][2] is None:
-            storage['store']['retreat'] = iToMyFields[0][1]
-            ans = storage['store']['retreat'].pop()
-            return self.coordinateToDirection(stat, ans[0], ans[1])
-
-        # case5: 检查第一种路径
-        startX = storage['path']['enemy_me_bands'][0][2][0]
-        startY = storage['path']['enemy_me_bands'][0][2][1]
-        endX = stat['now']['players'][2 - me]['x']                  # 对方头部的位置
-        endY = stat['now']['players'][2 - me]['y']
-        if startX > endX:
-            startX, endX = endX, startX
-        if startY > endY:
-            startY, endY = endY, startY
-
-        count = [0]                                                  # 检查第一条路径
-        target = iToMyFields[0][2]
-        if startX <= target[0] <= endX and startY <= target[0] <= endY:  # 目标区域在带头和目标点之间的区域，可以走，对方不一定敢来
-            count[0] = 0
-        else:
-            for i in range(len(iToMyFields[0][1])):
-                if startX <= iToMyFields[0][1][i][0] <= endX and startY <= iToMyFields[0][1][i][0] <= endY:
-                    count[0] += 1
-        if count[0] == 0:
-            storage['store']['retreat'] = iToMyFields[0][1]
-            ans = storage['store']['retreat'].pop()
-            return self.coordinateToDirection(stat, ans[0], ans[1])
-
-        # case5: 检查其余路径
-        k = 1
-        pathNum = len(iToMyFields)
-        minCount = count[0]
-        minIndex = 0
-        while k < pathNum:
-            count.pop(0)
-            target = iToMyFields[k][2]
-            if startX <= target[0] <= endX and startY <= target[0] <= endY:  # 目标区域在两个带头之间的区域，可以走，对方不一定敢来
-                count[k] = 0
-            else:
-                for i in range(iToMyFields[k][2]):
-                    if startX <= iToMyFields[k][2][i][0] <= endX and startY <= iToMyFields[k][2][i][0] <= endY:
-                        count[k] += 1
-            if count[k] == 0:
-                storage['store']['retreat'] = iToMyFields[k][1]
-                ans = storage['store']['retreat'].pop()
-                return self.coordinateToDirection(stat, ans[0], ans[1])
-            elif count[k] < minCount:
-                minIndex = k
-            k += 1
-
-        storage['store']['retreat'] = iToMyFields[minIndex][1]
-        ans = storage['store']['retreat'].pop()
+        # case4: 回
+        ans = storage['me_me_fields'][2][0]
         return self.coordinateToDirection(stat, ans[0], ans[1])
 
     def subquent_output(self, stat, storage):
-        # 如果计算过了路径，此处应该是规划好的路线，不需要stat和storage。你们可以重载不用这两个值
-        # return 0  # 路径接下来的值，这个复杂度我假设是O(1)的，不要从list开头取出来，从尾取出来。
-        if storage['store']['retreat'] is None:
-            storage['store']['retreat'] = []
-        if len(storage['store']['retreat']) != 0:
-            ans = storage['store']['retreat'].pop()
+        if storage['me_me_fields'] is not None:
+            ans = storage['me_me_fields'][2][0]
             return self.coordinateToDirection(stat, ans[0], ans[1])
         else:
             return self.init_output(stat, storage, 'retreat')
@@ -152,32 +98,28 @@ class Retreat(State):
         # Step2: 根据每一种情况，返回下一个状态的名字
         # 下面我把几种情况列举好，不过优先级顺序自己定
 
-        # 提交时把下面这句话注释掉
+        # 提交时把这句话删掉
+        me = stat['now']['me']['id']
+        x = stat['now']['me']['x']
+        y = stat['now']['me']['y']
 
-        me = storage['me']['id']
-        x = storage['me']['x']
-        y = storage['me']['y']
-
-        if storage['path']['me_enemy_bands'][0][0] < storage['path']['enemy_enemy_fields'][0][0]:  # go back to attack
+        if storage['attack'].interface_func(stat, storage):  # go back to attack
             return ATTACK
             pass
-        elif storage['fields'][x][y] == me:  # 回到领地，go to approach
+        elif stat['now']['fields'][x][y] == me:  # 回到领地，go to approach
             return APPROACH
             pass
         else:  # 还是自己
             return RETREAT
             pass
-        # debug
-
-        # return 0
 
     def state_transfer(self, storage, next_state_name):
         storage['state'] = next_state_name
 
     def transfer_to_retreat(self, storage):          # 判断是否调用撤退函数
-        disToHome = storage['path']['me_me_fields'][0][0]
-        disBeAttacked = storage['path']['enemy_me_bands'][0][0]
-        if disToHome <= disBeAttacked:
+        dis_me_me_fields = storage['me_me_fields'][0]
+        dis_enemy_me_fields = storage['enemy_me_bands'][0]
+        if dis_me_me_fields <= dis_enemy_me_fields:
             return True
         else:
             return False
