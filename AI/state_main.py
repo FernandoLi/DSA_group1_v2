@@ -86,8 +86,10 @@ def play(stat, storage):
         2. 首字母为'r'或'R'的字符串 - 代表右转
         3. 其余 - 代表直行
     '''
-
-    outcome = curr_state.output_func(stat, storage, storage['state'])
+    if stat['now']['turnleft'][1] == 2000:
+        outcome = curr_state.output_func(stat, storage, None)
+    else:
+        outcome = curr_state.output_func(stat, storage, storage['state'])
     # debug
     if curr_state.name != ENCLOSE and curr_state.name != APPROACH:
         # 请改成你的state名称，比如'attack'。这里是，只有当现在不是你的state才会deadcheck，然后random选一个值走，
