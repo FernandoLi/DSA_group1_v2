@@ -4,7 +4,7 @@ from tkinter.messagebox import showerror
 from time import perf_counter as pf, sleep
 from colorsys import hsv_to_rgb
 from threading import Thread
-import os, sys, pickle, zlib
+import os, sys, pickle, zlib, gc
 
 import match_core
 
@@ -21,6 +21,7 @@ tk.geometry('+%d+0' % (tk.winfo_screenwidth() / 2 - 300))
 tk.resizable(0, 0)
 tk_left = Frame(tk)
 tk_left.pack(side=LEFT, fill=Y)
+MATCH_COUNT = IntVar(value=0)
 
 # 玩家、默认AI模块
 if 'players':
@@ -43,7 +44,7 @@ if 'players':
 
     class human_control:
         op = None
-        delay = 0.3
+        delay = 0.03
 
         def play(stat, storage):
             sleep(human_control.delay)
@@ -67,6 +68,8 @@ if 'race funcs':
     match_core.timer = null_timer
 
     def run_match():
+        gc.collect()
+
         # 读取参数
         k = width_set.get()
         h = height_set.get()
@@ -77,6 +80,15 @@ if 'race funcs':
         else:
             names = (ai.AI_NAME, '人类')
             func1, func2 = ai.AI_MODULE, human_control
+
+        # 更新比赛场次
+        match_index = MATCH_COUNT.get()
+        if not match_index:
+            try:
+                ai.AI_MODULE.init(match_core.STORAGE[player_first.get()])
+            except:
+                pass
+        MATCH_COUNT.set(match_index + 1)
 
         # 初始化显示环境
         display._setup_grid((k * 2, h))
@@ -126,11 +138,11 @@ if 'display funcs':
         f, s = names if result[0] else names[::-1]  # 失败+成功顺序玩家名称
 
         if rtype == 0:
-            return '由于%s撞墙，%s获得胜利' % (f, s)
+            return '由于%s撞墙\n%s获得胜利' % (f, s)
 
         if rtype == 1:
             if result[0] != result[2]:
-                return '由于%s撞纸带自杀，%s获得胜利' % (f, s)
+                return '由于%s撞纸带自杀\n%s获得胜利' % (f, s)
             else:
                 return '%s撞击对手纸带，获得胜利' % s
 
@@ -147,16 +159,16 @@ if 'display funcs':
                 print(match_core.match.DEBUG_TRACEBACK)
             except:
                 pass
-            return '由于%s函数报错(%s: %s)，%s获得胜利' % (f, type(result[2]).__name__,
-                                                result[2], s)
+            return '由于%s函数报错\n(%s: %s)\n%s获得胜利' % (f, type(result[2]).__name__,
+                                                   result[2], s)
 
         if rtype == -2:
-            return '由于%s决策时间耗尽，%s获得胜利' % (f, s)
+            return '由于%s决策时间耗尽\n%s获得胜利' % (f, s)
 
         pre = '双方正碰' if rtype == 3 else '回合数耗尽'
         scores = (('%s: %d' % pair) for pair in zip(names, result[2]))
         res = '平局' if result[0] is None else ('%s获胜' % s)
-        return '%s，双方得分分别为：%s——%s' % (pre, '; '.join(scores), res)
+        return '%s\n双方得分分别为：\n%s\n%s' % (pre, '\n'.join(scores), res)
 
     def gen_color_text(h, s, v):
         '''
@@ -207,9 +219,11 @@ if 'classes':
                     with open(path, encoding='utf-8', errors='ignore') as f:
                         exec(f.read())
 
+                load.play
                 self.AI_MODULE = load
                 self.AI_NAME = name
                 self.AI_info.set(name)
+                clear_storage()
             except Exception as e:
                 showerror('%s: %s' % (self.name, type(e).__name__), str(e))
 
@@ -305,7 +319,7 @@ if 'classes':
                     'fields':
                     [[None] * self.size[1] for i in range(self.size[0])]
                 }
-                self.last_frame=None
+                self.last_frame = None
 
             # 清空屏幕
             self._clear()
@@ -435,10 +449,23 @@ if 'IO':
             w['state'] = DISABLED
 
     # 绑定玩家输入
-    key_mapping = {39: 0, 68: 0, 40: 1, 83: 1, 37: 2, 65: 2, 38: 3, 87: 3}
+    key_mapping = {
+        'Right': 0,
+        'Donw': 1,
+        'Left': 2,
+        'Up': 3,
+        'D': 0,
+        'S': 1,
+        'A': 2,
+        'W': 3,
+        'd': 0,
+        's': 1,
+        'a': 2,
+        'w': 3
+    }
 
     def key_control(e):
-        key = e.keycode
+        key = e.keysym
         if key in key_mapping:
             human_control.op = key_mapping[key]
 
@@ -463,6 +490,12 @@ if 'IO':
             showerror('%s: %s' % (self.name, type(e).__name__), str(e))
         widget_on()
 
+    # 清空存储区
+    def clear_storage():
+        match_core.STORAGE = [{}, {}]
+        MATCH_COUNT.set(0)
+        gc.collect()
+
 
 # 合成窗口
 if 'widgets':
@@ -473,6 +506,15 @@ if 'widgets':
     ai.AI_info.set('默认AI (循环画正方形)')
     ai.AI_MODULE = null_AI
     ai.AI_NAME = '默认AI'
+
+    # 函数存储控制
+    storage_frame = Frame(tk_left)
+    storage_frame.pack(padx=5, fill=X)
+    b = Button(storage_frame, text='清空存储区', command=clear_storage)
+    b.pack(side=LEFT, fill=Y, pady=[5, 0], padx=5)
+    OP_WIDGETS.append(b)
+    Label(storage_frame, text='已进行比赛场数：').pack(side=LEFT)
+    Label(storage_frame, textvariable=MATCH_COUNT).pack(side=LEFT)
 
     # 比赛设置
     if 'match setting':
@@ -516,7 +558,7 @@ if 'widgets':
     # 信息栏
     info = StringVar(value='人類に栄光あれ！')
     Label(
-        tk_left, textvariable=info, justify=LEFT).pack(
+        tk_left, textvariable=info, justify=LEFT, wraplength=240).pack(
             padx=5, pady=5, anchor=W)
 
     # 双击全选功能
