@@ -1,0 +1,160 @@
+Turn = 2, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 99999999, 0, 99999999
+
+Turn = 6, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 2, 43, 3, 43
+
+Turn = 74, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 99999999, 0, 99999999
+
+Turn = 96, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 1, 25, 3, 25
+
+Turn = 124, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 27, 2, 99999999
+
+Turn = 136, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 2, 99999999, 0, 28
+
+Turn = 164, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 15, 4, 99999999
+
+Turn = 166, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 2, 14, 3, 19
+
+Turn = 194, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 17, 5, 99999999
+
+Turn = 208, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 2, 7, 2, 11
+
+Turn = 218, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 99999999, 0, 99999999
+
+Turn = 222, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 1, 99999999, 0, 9
+
+Turn = 226, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 99999999, 0, 99999999
+
+Turn = 228, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 2, 99999999, 0, 5
+
+Turn = 232, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 6, 1, 99999999
+
+Turn = 238, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 1, 99999999, 0, 7
+
+Turn = 242, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 99999999, 0, 99999999
+
+Turn = 264, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 2, 6, 2, 6
+
+Turn = 268, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 99999999, 0, 99999999
+
+Turn = 290, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 1, 99999999, 0, 5
+
+Turn = 294, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 4, 2, 99999999
+
+Turn = 356, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 2, 19, 2, 27
+
+Turn = 386, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 19, 5, 99999999
+
+Turn = 392, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 1, 13, 6, 13
+
+Turn = 398, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 10, 3, 99999999
+
+Turn = 476, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 1, 34, 4, 42
+
+Turn = 598, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 25, 3, 99999999
+
+Turn = 618, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 1, 7, 2, 7
+
+Turn = 624, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 8, 1, 99999999
+
+Turn = 628, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 1, 99999999, 0, 7
+
+Turn = 632, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 7, 2, 99999999
+
+Turn = 638, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 1, 99999999, 0, 5
+
+Turn = 640, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 99999999, 0, 99999999
+
+Turn = 654, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 1, 99999999, 0, 7
+
+Turn = 660, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 99999999, 0, 99999999
+
+Turn = 666, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 2, 99999999, 0, 9
+
+Turn = 682, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 99999999, 0, 99999999
+
+Turn = 696, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 1, 16, 1, 21
+
+Turn = 720, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 99999999, 0, 99999999
+
+Turn = 734, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 2, 5, 2, 4
+
+Turn = 738, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 99999999, 0, 99999999
+
+Turn = 752, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 2, 99999999, 0, 6
+
+Turn = 756, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 99999999, 0, 99999999
+
+Turn = 878, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 2, 73, 6, 77
+
+Turn = 912, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 78, 23, 99999999
+
+Turn = 948, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 2, 60, 36, 104
+
+Turn = 976, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 46, 38, 99999999
+
+Turn = 988, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 1, 40, 32, 83
+
+Turn = 1070, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 99999999, 0, 99999999
+
+Turn = 1148, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 1, 99999999, 0, 7
+
+Turn = 1152, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 99999999, 0, 99999999
+
+Turn = 1184, State = enclose
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 1, 99999999, 0, 9
+
+Turn = 1198, State = approach
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands = 0, 99999999, 0, 99999999
+
+ime of path_to: 4.311649s

@@ -1,0 +1,80 @@
+(1, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 99999999, 0, 99999999
+(5, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 2, 99999999, 0, 54
+(97, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 54, 8, 99999999
+(123, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 2, 41, 19, 55
+(195, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 99999999, 0, 99999999
+(221, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 2, 26, 12, 38
+(281, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 25, 9, 99999999
+(299, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 2, 16, 3, 26
+(327, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 26, 4, 99999999
+(341, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 2, 19, 8, 28
+(377, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 99999999, 0, 99999999
+(389, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 1, 99999999, 0, 10
+(405, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 99999999, 0, 99999999
+(423, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 2, 9, 3, 12
+(439, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 99999999, 0, 99999999
+(451, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 1, 23, 5, 26
+(477, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 38, 4, 99999999
+(519, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 2, 99999999, 0, 15
+(545, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 20, 2, 99999999
+(553, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 1, 16, 1, 24
+(599, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 21, 2, 99999999
+(643, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 2, 99999999, 0, 33
+(687, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 46, 5, 99999999
+(727, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 2, 28, 2, 28
+(743, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 99999999, 0, 99999999
+(749, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 1, 99999999, 0, 12
+(755, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 99999999, 0, 99999999
+(765, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 2, 7, 4, 7
+(769, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 8, 6, 99999999
+(789, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 2, 18, 6, 26
+(793, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 17, 5, 99999999
+(815, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 1, 5, 1, 6
+(819, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 99999999, 0, 99999999
+(843, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 1, 29, 5, 33
+(847, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 27, 7, 99999999
+(873, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 1, 99999999, 0, 10
+(877, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 99999999, 0, 99999999
+(905, enclose)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 1, 99999999, 0, 22
+(909, approach)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 18, 3, 99999999
+(921, attack)
+me_me_fields, me_enemy_bands, enemy_enemy_fields, enemy_me_bands, = 0, 8, 8, 99999999
